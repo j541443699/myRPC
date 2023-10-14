@@ -182,3 +182,11 @@ public class NettyClientMain {
 项目架构图：
 
 ![image-20231014215747478](README.assets/image-20231014215747478.png)
+
+# Reference
+
+参考：
+
+[Yinsiyuan/Yin.RPC: My Dream RPC. (github.com)](https://github.com/Yinsiyuan/Yin.RPC)
+
+[Snailclimb/guide-rpc-framework: A custom RPC framework implemented by Netty+Kyro+Zookeeper.（一款基于 Netty+Kyro+Zookeeper 实现的自定义 RPC 框架-附详细实现过程和相关教程。） (github.com)](https://github.com/Snailclimb/guide-rpc-framework)
