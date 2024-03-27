@@ -75,7 +75,7 @@ public class NettyClient {
                             pipeline.addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS));
                             pipeline.addLast(new NettyEncoder(new KryoSerializer(), ClientRequest.class));
                             pipeline.addLast(new NettyDecoder(new KryoSerializer(), ServerResponse.class));
-                            pipeline.addLast(new NettyClientHandler());
+                            pipeline.addLast(new NettyClientHandler(NettyClient.this));
                         }
                     });
 
@@ -162,23 +162,34 @@ public class NettyClient {
     public Channel getChannel2(InetSocketAddress inetSocketAddress) {
         List<Channel> channelList = ChannelManager.channelList;
         if (channelList.size() == 0) {
-            try {
-                ChannelFuture channelFuture = bootstrap.connect(inetSocketAddress).sync();
-                ChannelManager.channelList.add(channelFuture.channel());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            ChannelFuture channelFuture = null;
+            // channelFuture = bootstrap.connect(inetSocketAddress).sync();
+            // ChannelManager.channelList.add(channelFuture.channel());
+            Channel channel = doConnect(inetSocketAddress);
+            ChannelManager.channelList.add(channel);
         }
         Random random = new Random();
         int idx = random.nextInt(channelList.size());
-        return channelList.get(idx);
+        Channel channel = channelList.get(idx);
+        //若服务器断开了连接，那么客户端这里从channelList获取的连接就不可用，会执行到这里，那么就重建连接
+        if (!channel.isActive()) {
+            ChannelManager.channelList.remove(channel);
+            channel = doConnect(inetSocketAddress);
+            ChannelManager.channelList.add(channel);
+        }
+        return channel;
     }
 
-    private Channel doConnect(InetSocketAddress inetSocketAddress) {
+    public Channel doConnect(InetSocketAddress inetSocketAddress) {
         ChannelFuture channelFuture = null;
         try {
             log.info("doConnect: " + inetSocketAddress.toString());
             channelFuture = bootstrap.connect(inetSocketAddress).sync();
+            //TODO: 连接建立失败后重连
+            while (!channelFuture.channel().isActive()) {
+                Thread.sleep(3000);
+                channelFuture = bootstrap.connect(inetSocketAddress).sync();
+            }
         } catch (InterruptedException e) {
             throw new IllegalStateException("连接失败");
         }

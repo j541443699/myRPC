@@ -39,7 +39,7 @@ public class TestController {
                 @Override
                 public void run() {
                     testService.test(new Test("你好", "问候语"));
-                    // log.info("finish -----------------------------------------------------------------" + i);
+                    // log.info("finish -----------------------------------------------------------------" + j);
                     // System.out.println("finish -----------------------------------------------------------------" + i);
                     // System.out.print(j + "--" + (System.currentTimeMillis() - start)/1000 + "秒|");
                     countDownLatch.countDown();

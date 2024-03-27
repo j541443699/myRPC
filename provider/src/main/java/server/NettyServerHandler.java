@@ -8,6 +8,8 @@ import enums.SerializationTypeEnum;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import medium.Medium;
@@ -128,23 +130,23 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
         ctx.close();
     }
 
-    // @Override
-    // public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-    //     //利用链路空闲机制实现心跳检测，检测链路的可用性
-    //     // log.info("userEventTriggered call");
-    //     if (evt instanceof IdleStateEvent) {
-    //         IdleStateEvent event = (IdleStateEvent) evt;
-    //         if (event.state().equals(IdleState.READER_IDLE)) {
-    //             // System.out.println("读空闲");
-    //             log.info("read timeout happen, close the connection");
-    //             ctx.close();
-    //         }
-    //         // if (event.state().equals(IdleState.WRITER_IDLE)) {
-    //         //     System.out.println("写空闲");
-    //         // }
-    //         // if (event.state().equals(IdleState.ALL_IDLE)) {
-    //         //     System.out.println("读写空闲");
-    //         // }
-    //     }
-    // }
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        //利用链路空闲机制实现心跳检测，检测链路的可用性
+        // log.info("userEventTriggered call");
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state().equals(IdleState.READER_IDLE)) {
+                // System.out.println("读空闲");
+                log.info("read timeout happen, close the connection");
+                ctx.close();
+            }
+            // if (event.state().equals(IdleState.WRITER_IDLE)) {
+            //     System.out.println("写空闲");
+            // }
+            // if (event.state().equals(IdleState.ALL_IDLE)) {
+            //     System.out.println("读写空闲");
+            // }
+        }
+    }
 }

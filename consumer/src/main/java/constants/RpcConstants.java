@@ -21,7 +21,7 @@ public class RpcConstants {
     public static final String PONG = "pong";
 
     //线程组大小
-    // public static final int CHANNEL_SIZE = NettyRuntime.availableProcessors() * 2;//16 * 2
+    // public static final int CHANNEL_SIZE = NettyRuntime.availableProcessors() * 2;//16(逻辑处理器数量) * 2
     public static final int CHANNEL_SIZE = 32;
     //EventLoop分配的线程池大小
     public static final int EVENTLOOP_EXECUTOR_SIZE = 10;
